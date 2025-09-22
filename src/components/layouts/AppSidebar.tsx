@@ -21,21 +21,31 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
 
-const navigationItems = [
-  { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Rules Management", url: "/rules", icon: FileText },
-  { title: "Upload Claims", url: "/claims/upload", icon: Upload },
-  { title: "Validation", url: "/validate", icon: CheckCircle },
-  { title: "Results", url: "/results", icon: Database },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
-  { title: "Admin Tools", url: "/admin", icon: Settings },
-];
+
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+
+    const [savedTenant, setSavedTenant] = useState<string | null>(null);
+
+  useEffect(() => {
+    const tenant = localStorage.getItem("selectedTenant");
+    setSavedTenant(tenant);
+  }, []);
+
+
+  const navigationItems = [
+  { title: "Dashboard", url: "/dashboard", icon: Home },
+  { title: "Rules Management", url: "/rules", icon: FileText },
+  { title: "Upload Claims", url: "/claims/upload", icon: Upload },
+  { title: "Validation", url: "/validate", icon: CheckCircle },
+  { title: "Results", url: `/results/${savedTenant}`, icon: Database },
+  { title: "Analytics", url:  `/analytics/${savedTenant}`, icon: BarChart3 },,
+];
 
   const isCollapsed = state === "collapsed";
   const isActive = (path: string) => currentPath === path;

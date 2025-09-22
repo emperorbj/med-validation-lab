@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Lock, User } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -13,31 +14,33 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+  try {
+    const { data } = await api.post("/auth/login", {
+      username,
+      password,
+    });
+    // Store token
+    localStorage.setItem("auth_token", data.access_token);
+    toast({
+      title: "Login Successful",
+      description: `Welcome ${data.username}`,
+      variant: "default",
+    });
+    navigate("/dashboard");
+  } catch (error: any) {
+    toast({
+      title: "Login Failed",
+      description: error.response?.data?.detail || "Invalid credentials",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-    // Mock authentication
-    setTimeout(() => {
-      if (username && password) {
-        // Simulate successful login
-        localStorage.setItem("auth_token", "mock-jwt-token-" + Date.now());
-        toast({
-          title: "Login Successful",
-          description: "Welcome to RCM Validation Dashboard",
-          variant: "default",
-        });
-        navigate("/dashboard");
-      } else {
-        toast({
-          title: "Login Failed",
-          description: "Please enter both username and password",
-          variant: "destructive",
-        });
-      }
-      setIsLoading(false);
-    }, 1000);
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/20 to-primary/5 p-4">

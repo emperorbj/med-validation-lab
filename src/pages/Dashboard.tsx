@@ -10,6 +10,7 @@ import {
   Activity,
   DollarSign,
 } from "lucide-react";
+import { useState } from "react";
 
 // Mock data for dashboard
 const mockStats = {
@@ -23,9 +24,19 @@ const mockStats = {
 };
 
 export default function Dashboard() {
+
+  const [isDemo, setIsDemo] = useState(true);
+
+  
   return (
     <div className="space-y-6">
       {/* Header */}
+      {isDemo && (
+  <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+    Demo Mode: Data is simulated
+  </div>
+)}
+
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">

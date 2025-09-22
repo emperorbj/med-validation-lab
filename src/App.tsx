@@ -12,6 +12,10 @@ import NotFound from "./pages/NotFound";
 
 // Layouts
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { ClaimsUpload } from "./pages/ClaimsUpload";
+import { Validate } from "./pages/Validate";
+import { Results } from "./pages/Results";
+import { Analytics } from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -43,11 +47,11 @@ const App = () => (
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="rules" element={<Rules />} />
-            <Route path="claims/upload" element={<div>Claims Upload (Coming Soon)</div>} />
-            <Route path="validate" element={<div>Validation (Coming Soon)</div>} />
-            <Route path="results" element={<div>Results (Coming Soon)</div>} />
-            <Route path="analytics" element={<div>Analytics (Coming Soon)</div>} />
-            <Route path="admin" element={<div>Admin Tools (Coming Soon)</div>} />
+            <Route path="claims/upload" element={<ClaimsUpload/>} />
+            <Route path="validate" element={<Validate/>} />
+            <Route path="results/:id" element={<Results/>} />
+            <Route path="analytics/:id" element={<Analytics/>} />
+            {/* <Route path="admin" element={<AdminTools/>} /> */}
           </Route>
 
           {/* Catch-all route */}
