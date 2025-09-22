@@ -17,6 +17,17 @@ export const Analytics: React.FC = () => {
   const [analyticsData, setAnalyticsData] = useState<any>(null);
   const { id } = useParams();
 
+
+
+    useEffect(() => {
+      const savedTenant = localStorage.getItem("selectedTenant");
+      if (savedTenant) setSelectedTenant(savedTenant); 
+      if (!savedTenant && selectedTenant !== "hospital_A") {
+        setSelectedTenant("hospital_A"); // Set default tenant
+      }
+    }, []);
+  
+
   const fetchAnalytics = async () => {
     try {
       setIsRefreshing(true);

@@ -36,6 +36,16 @@ export const Results: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { id } = useParams();
 
+
+
+  useEffect(() => {
+    const savedTenant = localStorage.getItem("selectedTenant");
+    if (savedTenant) setSelectedTenant(savedTenant); 
+    if (!savedTenant && selectedTenant !== "hospital_A") {
+      setSelectedTenant("hospital_A"); // Set default tenant
+    }
+  }, []);
+
   const fetchResults = async () => {
     try {
       setIsRefreshing(true);
