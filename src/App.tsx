@@ -44,7 +44,7 @@ const App = () => (
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route index element={<Navigate to="/login" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="rules" element={<Rules />} />
             <Route path="claims/upload" element={<ClaimsUpload/>} />
