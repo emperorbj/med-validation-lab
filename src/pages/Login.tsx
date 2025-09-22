@@ -102,7 +102,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </form>
           <div className="mt-6 text-center">
             <p className="text-xs text-muted-foreground">
-              Demo credentials: Use any username and password
+              Demo credentials: username:admin and password:admin123
             </p>
           </div>
         </CardContent>
