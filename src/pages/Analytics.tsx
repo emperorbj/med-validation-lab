@@ -15,24 +15,25 @@ export const Analytics: React.FC = () => {
   const [timeRange, setTimeRange] = useState('7days');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [analyticsData, setAnalyticsData] = useState<any>(null);
-  const { id } = useParams();
+  // const { id } = useParams();
 
 
 
     useEffect(() => {
       const savedTenant = localStorage.getItem("selectedTenant");
-      if (savedTenant) setSelectedTenant(savedTenant); 
-      if (!savedTenant && selectedTenant !== "hospital_A") {
-        setSelectedTenant("hospital_A"); // Set default tenant
+      if (savedTenant) {
+        setSelectedTenant(savedTenant); 
       }
     }, []);
   
 
   const fetchAnalytics = async () => {
+        if (!selectedTenant) return;
+
     try {
       setIsRefreshing(true);
       const { data } = await api.get(
-        `/analytics/${encodeURIComponent(id)}`,
+        `/analytics/${encodeURIComponent(selectedTenant)}`,
         { headers: { 'Content-Type': 'application/json' } }
       );
       setAnalyticsData(data);
@@ -43,9 +44,22 @@ export const Analytics: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchAnalytics();
+
+   useEffect(() => {
+    if (selectedTenant) {
+      fetchAnalytics();
+    }
   }, [selectedTenant]);
+
+  // useEffect(() => {
+  //   fetchAnalytics();
+  // }, [selectedTenant]);
+
+
+  const handleTenantChange = (newTenant: string) => {
+    localStorage.setItem("selectedTenant", newTenant);
+    setSelectedTenant(newTenant);
+  };
 
   const handleExport = () => {
     if (!analyticsData) return;
@@ -87,7 +101,7 @@ export const Analytics: React.FC = () => {
       <Card>
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <TenantSelector value={selectedTenant} onValueChange={setSelectedTenant} />
+            <TenantSelector value={selectedTenant} onValueChange={handleTenantChange} />
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <Calendar className="h-4 w-4" /> Time Range

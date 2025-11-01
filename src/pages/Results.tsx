@@ -34,22 +34,29 @@ export const Results: React.FC = () => {
   const [selectedTenant, setSelectedTenant] = useState("hospital_A");
   const [claims, setClaims] = useState<Claim[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { id } = useParams();
+  // const { id } = useParams();
 
-
-
-  useEffect(() => {
+useEffect(() => {
     const savedTenant = localStorage.getItem("selectedTenant");
-    if (savedTenant) setSelectedTenant(savedTenant); 
-    if (!savedTenant && selectedTenant !== "hospital_A") {
-      setSelectedTenant("hospital_A"); // Set default tenant
+    if (savedTenant) {
+      setSelectedTenant(savedTenant);
     }
   }, []);
 
+  // useEffect(() => {
+  //   const savedTenant = localStorage.getItem("selectedTenant");
+  //   if (savedTenant) setSelectedTenant(savedTenant); 
+  //   if (!savedTenant && selectedTenant !== "hospital_A") {
+  //     setSelectedTenant("hospital_A"); // Set default tenant
+  //   }
+  // }, []);
+
   const fetchResults = async () => {
+        if (!selectedTenant) return;
+
     try {
       setIsRefreshing(true);
-      const { data } = await api.get(`/results/${id}`);
+      const { data } = await api.get(`/results/${encodeURIComponent(selectedTenant)}`);
       setClaims(data.claims || []);
       toast({
         title: "Results Loaded",
@@ -66,9 +73,21 @@ export const Results: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchResults();
+    useEffect(() => {
+    if (selectedTenant) {
+      fetchResults();
+    }
   }, [selectedTenant]);
+
+  // ✅ FIX: Save tenant to localStorage when changed
+  const handleTenantChange = (newTenant: string) => {
+    localStorage.setItem("selectedTenant", newTenant);
+    setSelectedTenant(newTenant);
+  };
+
+  // useEffect(() => {
+  //   fetchResults();
+  // }, [selectedTenant]);
 
   const handleExport = () => {
     const csv = [
@@ -129,7 +148,7 @@ export const Results: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <TenantSelector value={selectedTenant} onValueChange={setSelectedTenant} />
+            <TenantSelector value={selectedTenant} onValueChange={handleTenantChange} />
             <div>
               <p className="text-sm text-gray-500">
                 Tenant results update automatically on change.

@@ -10,7 +10,7 @@ import { Upload, FileText, AlertCircle, CheckCircle, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 
-interface UploadedFile {
+interface UploadedFile {    
   name: string;
   size: number;
   type: string;
@@ -24,7 +24,7 @@ const transformClaims = (apiClaims: any[]): Claim[] =>
   apiClaims.map((c) => ({
     id: c.claim_id,
     patientId: c.member_id,
-    patientName: c.facility_id || "Unknown",
+    patientName: c.national_id,
     serviceDate: c.service_date,
     amount: c.paid_amount_aed,
     status: (c.status || "pending").toLowerCase(),
@@ -81,7 +81,9 @@ export const ClaimsUpload: React.FC = () => {
         file.type ===
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
         file.name.endsWith(".csv") ||
-        file.name.endsWith(".xlsx")
+        file.name.endsWith(".xlsx") ||
+        file.name.endsWith(".xls")
+
     );
 
     if (validFiles.length === 0) {
@@ -172,6 +174,11 @@ export const ClaimsUpload: React.FC = () => {
 
   const completedFiles = uploadedFiles.filter((f) => f.status === "completed");
 
+  const handleTenantChange = (newTenant: string) => {
+    localStorage.setItem("selectedTenant", newTenant);
+    setSelectedTenant(newTenant);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -193,7 +200,7 @@ export const ClaimsUpload: React.FC = () => {
           <div className="max-w-md">
             <TenantSelector
               value={selectedTenant}
-              onValueChange={setSelectedTenant}
+              onValueChange={handleTenantChange}
               placeholder="Select a tenant to upload claims for..."
             />
           </div>
