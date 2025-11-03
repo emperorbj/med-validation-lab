@@ -19,16 +19,16 @@ export const Analytics: React.FC = () => {
 
 
 
-    useEffect(() => {
-      const savedTenant = localStorage.getItem("selectedTenant");
-      if (savedTenant) {
-        setSelectedTenant(savedTenant); 
-      }
-    }, []);
-  
+  useEffect(() => {
+    const savedTenant = localStorage.getItem("selectedTenant");
+    if (savedTenant) {
+      setSelectedTenant(savedTenant);
+    }
+  }, []);
+
 
   const fetchAnalytics = async () => {
-        if (!selectedTenant) return;
+    if (!selectedTenant) return;
 
     try {
       setIsRefreshing(true);
@@ -45,7 +45,7 @@ export const Analytics: React.FC = () => {
   };
 
 
-   useEffect(() => {
+  useEffect(() => {
     if (selectedTenant) {
       fetchAnalytics();
     }
@@ -149,6 +149,7 @@ export const Analytics: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+
 
       {/* Error Distribution Pie Chart */}
       <Card>

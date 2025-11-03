@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
+import { useNavigate } from 'react-router-dom';
 
 interface UploadedRule {
   id: string | number;
@@ -45,6 +46,9 @@ export default function Rules() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [rulesList, setRulesList] = useState<UploadedRule[]>([]);
+
+    const navigate = useNavigate();
+
 
   const handleFileChange = (type: "technical" | "medical", file: File | null) => {
     if (type === "technical") {
@@ -90,25 +94,34 @@ export default function Rules() {
         },
       });
 
-      toast({
-        title: "Upload Successful",
-        description: `Rules uploaded for tenant: ${data.tenant_id}`,
-      });
+      // Add to rules list first
+const now = new Date().toLocaleString();
+setRulesList((prev) => [
+  {
+    id: Date.now(),
+    tenantId: data.tenant_id,
+    tenantName: data.tenant_id,
+    uploadTime: now,
+    technicalRules: data.technical_rules_uploaded,
+    medicalRules: data.medical_rules_uploaded,
+    status: "active",
+  },
+  ...prev,
+]);
 
-      // Add to rules list
-      const now = new Date().toLocaleString();
-      setRulesList((prev) => [
-        {
-          id: Date.now(),
-          tenantId: data.tenant_id,
-          tenantName: data.tenant_id,
-          uploadTime: now,
-          technicalRules: data.technical_rules_uploaded,
-          medicalRules: data.medical_rules_uploaded,
-          status: "active",
-        },
-        ...prev,
-      ]);
+// Save tenant to localStorage for next page
+localStorage.setItem("selectedTenant", data.tenant_id);
+
+// Show success toast
+toast({
+  title: "Upload Successful",
+  description: `Rules uploaded for tenant: ${data.tenant_id}. Redirecting to claims upload...`,
+});
+
+// Navigate to claims upload after 1.5 seconds
+setTimeout(() => {
+  navigate("/claims/upload");
+}, 1500);
     } catch (err: any) {
       toast({
         title: "Upload Failed",
